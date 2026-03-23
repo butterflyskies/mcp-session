@@ -29,6 +29,6 @@ created more recently or will reconnect after eviction.
 ## Consequences
 - Both steady-state (idle cleanup) and adversarial (burst creation) scenarios are bounded
 - Legitimate clients evicted under load can reconnect and get a new session
-- Max sessions is configurable via `--max-sessions` CLI arg (default 100)
+- Max sessions is configurable via the `max_sessions` parameter to `BoundedSessionManager::new`
 - Creation-order tracking adds a `Mutex<VecDeque<SessionId>>` — serializes session creation,
   acceptable for a single-instance server

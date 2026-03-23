@@ -110,10 +110,11 @@ impl RateLimiter {
     /// session creation fails after [`reserve`](Self::reserve) succeeds.
     async fn rollback(&self, reserved_at: Instant) {
         let mut tracker = self.tracker.lock().await;
-        // The reserved timestamp is the most recently pushed entry; remove it.
-        // We compare by value to be safe against concurrent interleaving.
-        if tracker.back() == Some(&reserved_at) {
-            tracker.pop_back();
+        // Find and remove exactly one entry matching the reserved timestamp.
+        // Under concurrent interleaving, a later reservation may have been
+        // pushed after ours, so the entry is not necessarily at the back.
+        if let Some(pos) = tracker.iter().rposition(|t| *t == reserved_at) {
+            tracker.remove(pos);
         }
     }
 }
