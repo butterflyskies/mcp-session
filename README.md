@@ -46,6 +46,10 @@ See [ADR-0001](docs/adr/0001-bounded-session-management.md) for the architectura
 
 Under concurrent session creation, the live count may transiently exceed `max_sessions` by at most the number of concurrent callers. The limit is best-effort under contention. See [Discussion #6](https://github.com/butterflyskies/mcp-session/discussions/6) for the design tradeoff.
 
+## Status
+
+This crate is under active development. The public API follows [semver](https://semver.org/), but the internal architecture may change significantly — in particular, a future release may replace the current `LocalSessionManager` delegation model with a fully owned session lifecycle implementation to improve concurrency characteristics.
+
 ## License
 
 Licensed under either of [Apache License, Version 2.0](LICENSE-APACHE) or [MIT license](LICENSE-MIT) at your option.
