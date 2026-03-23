@@ -40,11 +40,11 @@ let manager = Arc::new(
 3. **Rate limiting** via an optional `RateLimiter` with sliding-window token rollback on creation failure
 4. **Split critical sections** — no locks held across async operations
 
-See [ADR-0020](https://github.com/butterflyskies/memory-mcp/blob/main/docs/adr/0020-bounded-session-management.md) for the architectural decision record.
+See [ADR-0001](docs/adr/0001-bounded-session-management.md) for the architectural decision record.
 
 ## Concurrency note
 
-Under concurrent session creation, the live count may transiently exceed `max_sessions` by at most the number of concurrent callers. The limit is best-effort under contention. See [Discussion #83](https://github.com/butterflyskies/memory-mcp/discussions/83) for the design tradeoff.
+Under concurrent session creation, the live count may transiently exceed `max_sessions` by at most the number of concurrent callers. The limit is best-effort under contention. See [Discussion #6](https://github.com/butterflyskies/mcp-session/discussions/6) for the design tradeoff.
 
 ## License
 

@@ -1,4 +1,4 @@
-# ADR-0020: Bounded session management with FIFO eviction
+# ADR-0001: Bounded session management with FIFO eviction
 
 ## Status
 Accepted
