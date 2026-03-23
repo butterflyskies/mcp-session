@@ -1,0 +1,24 @@
+[package]
+name = "mcp-session"
+version = "0.1.0"
+edition = "2021"
+license = "MIT OR Apache-2.0"
+description = "Bounded session management for MCP servers — max sessions, FIFO eviction, rate limiting"
+repository = "https://github.com/butterflyskies/mcp-session"
+keywords = ["mcp", "session", "rate-limiting", "security"]
+categories = ["network-programming", "asynchronous", "artificial-intelligence"]
+rust-version = "1.88"
+
+[dependencies]
+rmcp = { version = "1.1", features = ["server", "transport-streamable-http-server"] }
+tokio = { version = "1", features = ["sync"] }
+futures-core = { version = "0.3", default-features = false }
+thiserror = "2"
+
+[dev-dependencies]
+axum = "0.8"
+reqwest = { version = "0.12", default-features = false, features = ["json", "rustls-tls"] }
+rmcp = { version = "1.1", features = ["server", "macros", "transport-streamable-http-server"] }
+serde_json = "1"
+tokio = { version = "1", features = ["full"] }
+tokio-util = { version = "0.7", features = ["rt"] }
