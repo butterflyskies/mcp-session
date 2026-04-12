@@ -30,12 +30,12 @@ jobs:
             -o /tmp/cargo-nextest.tar.gz
           echo "8e38b16299864c9f597c9a1e2caf25b7e8b598ffc659ec014c2c735a9befd8fa  /tmp/cargo-nextest.tar.gz" | sha256sum -c -
           tar xzf /tmp/cargo-nextest.tar.gz -C /usr/local/bin
+      - run: cargo fmt --check
       # Resolve latest compatible deps before testing. Consumers of this
       # library never see our Cargo.lock — they get whatever the resolver
       # picks at install time. Testing against stale pinned deps can mask
       # breakage that every new consumer hits on day one.
       - run: cargo update
-      - run: cargo fmt --check
       - run: cargo clippy -- -D warnings
       - run: cargo nextest run --no-fail-fast
 
@@ -51,6 +51,7 @@ jobs:
       - uses: Swatinem/rust-cache@c19371144df3bb44fab255c43d04cbc2ab54d1c4 # v2.9.1
         with:
           key: msrv
+      - run: cargo update
       - run: cargo check
 
   audit:

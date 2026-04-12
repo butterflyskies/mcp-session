@@ -11,20 +11,17 @@
 //!
 //! # Quick start
 //!
-//! ```rust,ignore
+//! ```rust,no_run
 //! use std::sync::Arc;
 //! use mcp_session::BoundedSessionManager;
 //! use mcp_session::SessionConfig;
 //!
+//! let mut session_config = SessionConfig::default();
+//! session_config.keep_alive = Some(std::time::Duration::from_secs(4 * 60 * 60));
+//!
 //! let manager = Arc::new(
-//!     BoundedSessionManager::new(
-//!         SessionConfig {
-//!             keep_alive: Some(std::time::Duration::from_secs(4 * 60 * 60)),
-//!             ..Default::default()
-//!         },
-//!         100, // max concurrent sessions
-//!     )
-//!     .with_rate_limit(10, std::time::Duration::from_secs(60)),
+//!     BoundedSessionManager::new(session_config, 100)
+//!         .with_rate_limit(10, std::time::Duration::from_secs(60)),
 //! );
 //!
 //! // Pass `manager` to `StreamableHttpService::new(factory, manager, config)`
