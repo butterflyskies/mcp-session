@@ -31,7 +31,7 @@ jobs:
           app-id: ${{ secrets.RELEASE_BOT_APP_ID }}
           private-key: ${{ secrets.RELEASE_BOT_PRIVATE_KEY }}
       - id: release
-        uses: googleapis/release-please-action@8bb7a2ed0f90c9802c83129a9488d235a1f31a7c # main (2026-02-20, includes release-please 17.3.0 with force-tag-creation)
+        uses: googleapis/release-please-action@5c625bfb5d1ff62eadeeb3772007f7f66fdcf071 # main (2026-02-20, includes release-please 17.3.0 with force-tag-creation)
         with:
           config-file: release-please-config.json
           manifest-file: .release-please-manifest.json
