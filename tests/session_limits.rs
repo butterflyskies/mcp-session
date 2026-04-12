@@ -40,9 +40,10 @@ fn build_router(session_config: SessionConfig, max_sessions: usize) -> (Router, 
     let service = StreamableHttpService::new(
         || Ok(NoopServer),
         Arc::new(BoundedSessionManager::new(session_config, max_sessions)),
-        StreamableHttpServerConfig {
-            cancellation_token: ct_child,
-            ..Default::default()
+        {
+            let mut config = StreamableHttpServerConfig::default();
+            config.cancellation_token = ct_child;
+            config
         },
     );
 
@@ -67,9 +68,10 @@ fn build_router_with_rate_limit(
     let service = StreamableHttpService::new(
         || Ok(NoopServer),
         Arc::new(mgr),
-        StreamableHttpServerConfig {
-            cancellation_token: ct_child,
-            ..Default::default()
+        {
+            let mut config = StreamableHttpServerConfig::default();
+            config.cancellation_token = ct_child;
+            config
         },
     );
 
@@ -185,9 +187,10 @@ async fn post_mcp(
 /// A session that has been idle past its keep_alive duration must be rejected.
 #[tokio::test]
 async fn test_session_idle_timeout() {
-    let config = SessionConfig {
-        keep_alive: Some(Duration::from_secs(1)),
-        ..Default::default()
+    let config = {
+        let mut c = SessionConfig::default();
+        c.keep_alive = Some(Duration::from_secs(1));
+        c
     };
     let (base_url, _ct) = spawn_server(config, 10).await;
     let client = reqwest::Client::new();
@@ -215,10 +218,11 @@ async fn test_session_idle_timeout() {
 /// When `max_sessions` is exceeded the oldest session must be evicted.
 #[tokio::test]
 async fn test_max_sessions_eviction() {
-    let config = SessionConfig {
+    let config = {
         // Long keep_alive so sessions don't expire on their own.
-        keep_alive: Some(Duration::from_secs(300)),
-        ..Default::default()
+        let mut c = SessionConfig::default();
+        c.keep_alive = Some(Duration::from_secs(300));
+        c
     };
     let (base_url, _ct) = spawn_server(config, 2).await;
     let client = reqwest::Client::new();
@@ -269,9 +273,10 @@ async fn test_max_sessions_eviction() {
 /// reset-on-activity. We stagger creation to control which sessions are alive.
 #[tokio::test]
 async fn test_expired_session_does_not_consume_capacity() {
-    let config = SessionConfig {
-        keep_alive: Some(Duration::from_secs(1)),
-        ..Default::default()
+    let config = {
+        let mut c = SessionConfig::default();
+        c.keep_alive = Some(Duration::from_secs(1));
+        c
     };
     // Two-session capacity.
     let (base_url, _ct) = spawn_server(config, 2).await;
@@ -328,9 +333,10 @@ async fn test_expired_session_does_not_consume_capacity() {
 /// window. The first two sessions must succeed; the third must be rejected.
 #[tokio::test]
 async fn test_rate_limit_enforcement() {
-    let config = SessionConfig {
-        keep_alive: Some(Duration::from_secs(300)),
-        ..Default::default()
+    let config = {
+        let mut c = SessionConfig::default();
+        c.keep_alive = Some(Duration::from_secs(300));
+        c
     };
     // max_sessions=10 so the capacity limit is not the bottleneck;
     // rate limit is 2 creates per 60 seconds.

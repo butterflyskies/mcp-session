@@ -160,11 +160,10 @@ impl BoundedSessionManager {
     /// Panics if `max_sessions` is 0.
     pub fn new(session_config: SessionConfig, max_sessions: usize) -> Self {
         assert!(max_sessions >= 1, "max_sessions must be at least 1, got 0");
+        let mut inner = LocalSessionManager::default();
+        inner.session_config = session_config;
         Self {
-            inner: LocalSessionManager {
-                session_config,
-                ..Default::default()
-            },
+            inner,
             max_sessions,
             creation_order: tokio::sync::Mutex::new(VecDeque::new()),
             rate_limiter: None,
