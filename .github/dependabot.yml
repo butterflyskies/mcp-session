@@ -1,0 +1,37 @@
+version: 2
+
+updates:
+  # Rust dependencies — weekly check for security patches and version bumps.
+  - package-ecosystem: cargo
+    directory: /
+    schedule:
+      interval: weekly
+      day: friday
+    commit-message:
+      prefix: "chore(deps):"
+    labels:
+      - dependencies
+    open-pull-requests-limit: 5
+    groups:
+      rust-dependencies:
+        update-types:
+          - minor
+          - patch
+
+  # GitHub Actions — pinned to full SHA; Dependabot proposes SHA bumps.
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: friday
+    commit-message:
+      prefix: "chore(ci):"
+    labels:
+      - ci
+    open-pull-requests-limit: 3
+    groups:
+      actions:
+        update-types:
+          - major
+          - minor
+          - patch
