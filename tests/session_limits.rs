@@ -65,15 +65,11 @@ fn build_router_with_rate_limit(
     let mgr = BoundedSessionManager::new(session_config, max_sessions)
         .with_rate_limit(max_creates, window);
 
-    let service = StreamableHttpService::new(
-        || Ok(NoopServer),
-        Arc::new(mgr),
-        {
-            let mut config = StreamableHttpServerConfig::default();
-            config.cancellation_token = ct_child;
-            config
-        },
-    );
+    let service = StreamableHttpService::new(|| Ok(NoopServer), Arc::new(mgr), {
+        let mut config = StreamableHttpServerConfig::default();
+        config.cancellation_token = ct_child;
+        config
+    });
 
     let router = Router::new().nest_service("/mcp", service);
     (router, ct)
