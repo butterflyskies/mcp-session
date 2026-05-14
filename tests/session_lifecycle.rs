@@ -534,15 +534,17 @@ async fn t05b_idle_timeout_lifecycle_cleanup() {
         "lifecycle entry should be cleaned up after idle expiry"
     );
 
-    // Tracing event should have been emitted with duration.
+    // Tracing event should have been emitted with duration and reason=Closed
+    // (the documented catch-all for idle timeout, client DELETE, etc.).
     let events = store.lock().unwrap();
     assert!(
         events
             .events
             .iter()
             .any(|e| e.message.contains("session closed")
-                && e.fields.iter().any(|(k, _)| k == "duration_secs")),
-        "expected 'session closed' event with duration_secs after idle expiry"
+                && e.fields.iter().any(|(k, _)| k == "duration_secs")
+                && e.fields.iter().any(|(k, v)| k == "reason" && v == "Closed")),
+        "expected 'session closed' with duration_secs and reason=Closed after idle expiry"
     );
 }
 
