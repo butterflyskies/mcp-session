@@ -500,6 +500,52 @@ async fn t04_lifecycle_tracing_events() {
     }
 }
 
+/// T-05b: Idle timeout triggers full lifecycle cleanup — active_session_count
+/// drops to 0 AND a "session closed" tracing event with duration_secs is
+/// emitted. Proves rmcp's worker exit calls our close_session_impl.
+#[tokio::test]
+async fn t05b_idle_timeout_lifecycle_cleanup() {
+    let store = install_capturing();
+
+    let mgr = BoundedSessionManagerBuilder::new(10)
+        .idle_timeout(Duration::from_secs(1))
+        .build();
+
+    let (base_url, _ct) = spawn_server_with_builder(mgr.clone()).await;
+    let client = reqwest::Client::new();
+
+    let (status, sid) = post_mcp(&client, &base_url, None, &initialize_body()).await;
+    assert!(status.is_success());
+    let sid = sid.expect("session id");
+
+    assert_eq!(mgr.active_session_count().await, 1);
+
+    // Wait for idle timeout.
+    tokio::time::sleep(Duration::from_secs(3)).await;
+
+    // Session should be gone from HTTP layer.
+    let (status, _) = post_mcp(&client, &base_url, Some(&sid), &tools_list_body()).await;
+    assert_eq!(status, reqwest::StatusCode::NOT_FOUND);
+
+    // Lifecycle map should be cleaned up.
+    assert_eq!(
+        mgr.active_session_count().await,
+        0,
+        "lifecycle entry should be cleaned up after idle expiry"
+    );
+
+    // Tracing event should have been emitted with duration.
+    let events = store.lock().unwrap();
+    assert!(
+        events
+            .events
+            .iter()
+            .any(|e| e.message.contains("session closed")
+                && e.fields.iter().any(|(k, _)| k == "duration_secs")),
+        "expected 'session closed' event with duration_secs after idle expiry"
+    );
+}
+
 /// T-06: Backward compat — new() API works without lifecycle tracking.
 #[tokio::test]
 async fn t06_backward_compat_new_api() {
