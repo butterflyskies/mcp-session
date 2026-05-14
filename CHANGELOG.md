@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.0](https://github.com/butterflyskies/mcp-session/compare/v0.1.3...v0.2.0) (2026-05-14)
+
+
+### Features
+
+* session lifecycle observability — builder API, max lifetime, close reasons ([#18](https://github.com/butterflyskies/mcp-session/issues/18)) ([7cfb6a1](https://github.com/butterflyskies/mcp-session/commit/7cfb6a1f2c9391e2eaf11b4a851981ab5c163d28))
+
 ## [0.1.3](https://github.com/butterflyskies/mcp-session/compare/v0.1.2...v0.1.3) (2026-04-12)
 
 
