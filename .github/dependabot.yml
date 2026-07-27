@@ -15,6 +15,7 @@ updates:
     groups:
       rust-dependencies:
         update-types:
+          - major
           - minor
           - patch
 
