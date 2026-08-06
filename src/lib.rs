@@ -71,7 +71,6 @@ pub use rmcp::transport::streamable_http_server::session::SessionId;
 
 /// Errors returned by [`BoundedSessionManager`].
 #[derive(Debug, thiserror::Error)]
-#[non_exhaustive]
 pub enum BoundedSessionError {
     /// Propagated from the inner [`LocalSessionManager`].
     #[error(transparent)]
@@ -87,7 +86,6 @@ pub enum BoundedSessionError {
 
 /// The reason a session was closed.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-#[non_exhaustive]
 pub enum CloseReason {
     /// The session was evicted to make room for a new one (FIFO).
     Evicted,
@@ -192,7 +190,6 @@ impl RateLimiter {
 /// `max_sessions` by at most the number of concurrent callers. The limit is
 /// best-effort under contention; use a semaphore if exact enforcement is
 /// required.
-#[non_exhaustive]
 pub struct BoundedSessionManager {
     inner: LocalSessionManager,
     max_sessions: usize,
@@ -486,7 +483,6 @@ impl SessionManager for BoundedSessionManager {
 ///     .rate_limit(10, Duration::from_secs(60))
 ///     .build();
 /// ```
-#[non_exhaustive]
 pub struct BoundedSessionManagerBuilder {
     max_sessions: usize,
     idle_timeout: Option<Duration>,
